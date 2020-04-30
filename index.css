@@ -1,0 +1,25 @@
+.parallax {
+    /* The image used */
+    background-image: url("background.png");
+  
+    /* Full height */
+    min-height: 100vh;
+  
+    /* Create the parallax scrolling effect */
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin:-10px;
+    padding: 30px;
+  }
+
+  .verdana {font-family: Verdana, Geneva, Tahoma, sans-serif;}
+
+  .fontBig {
+    font-size: 30px;
+  }
+
+  .fontSmall {
+    font-size: 16px;
+  }
