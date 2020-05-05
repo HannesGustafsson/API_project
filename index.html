@@ -27,8 +27,22 @@
     </div>
 </body>
 
-<script>loadData();</script>
-<script>getTrainTimes();</script>
-<script>getForecast();</script>
+<script>
+    loadData();
+</script>
+
+<script>
+    (function run() {
+        getTrainTimes();
+        setTimeout(run, 10000);
+    })();
+</script>
+
+<script>
+    (function run() {
+        getForecast();
+        setTimeout(run, 10000);
+    })();
+</script>
 
 </html>

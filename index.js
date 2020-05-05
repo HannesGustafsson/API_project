@@ -1,3 +1,11 @@
+
+// REMOVES CURRENT DATA FROM CHOSEN DIV
+function clearDiv(elementID)
+{
+    document.getElementById(elementID).innerHTML = "";
+}
+
+
 const uriVisitors = 'https://5ea6a04c84f6290016ba6f29.mockapi.io/api/v1/visitors'
 
 // LOADS DATA
@@ -43,7 +51,7 @@ function addVisitor() {
 }
 
 
-// DELETE VISITOR
+// DELETES VISITOR
 function deleteVisitor(id) {
 
     fetch(uriVisitors + "/" + id,
@@ -67,6 +75,8 @@ function deleteVisitor(id) {
 
 // LOADS UPCOMING TRAIN DEPARTURES
 function getTrainTimes() {
+    clearDiv('departures');
+
     const departurediv = document.getElementById('departures');
 
     const uriTrains = 'https://cors-anywhere.herokuapp.com/http://api.sl.se/api2/realtimedeparturesV4.json?key=81a6a09603e14d51a73276f98ba095bb&siteid=9297&timewindow=10';
@@ -87,7 +97,10 @@ function getTrainTimes() {
         });
 }
 
+// LOADS CURRENT FORECAST
 function getForecast() {
+    clearDiv('divForecast');
+
     const divForecast = document.getElementById('divForecast');
     const uriForecast = 'https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/18.0629/lat/59.3182/data.json';
 
@@ -95,7 +108,7 @@ function getForecast() {
         .then((resp) => resp.json())
         .then(function (data) {
             console.log(data)
-            let forecasts = data.timeSeries[0].parameters;
+            let forecasts = data.timeSeries[2].parameters;
             let divtag = document.createElement('div');
 
             divtag.innerHTML = `${'Temperatur: ' + forecasts[1].values[0]}`;
