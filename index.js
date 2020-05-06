@@ -5,12 +5,16 @@ function clearDiv(elementID)
     document.getElementById(elementID).innerHTML = "";
 }
 
-
 const uriVisitors = 'https://5ea6a04c84f6290016ba6f29.mockapi.io/api/v1/visitors'
+var trivia;
 
-// LOADS DATA
+/* LOADS DATA
 function loadData() {
+
+    people = 0;
+    var triviaString;
     const datadiv = document.getElementById('datadiv');
+
     datadiv.innerHTML = '';
     fetch(uriVisitors)
         .then((resp) => resp.json())
@@ -21,6 +25,28 @@ function loadData() {
                 divtag.innerHTML = `<button onclick="deleteVisitor(${data.id})">-</button> ${data.name}`;
                 datadiv.appendChild(divtag);
             })
+        })
+}*/
+
+function loadData() {
+
+    var people = 0;
+    const datadiv = document.getElementById('datadiv');
+
+    datadiv.innerHTML = '';
+    fetch(uriVisitors)
+        .then((resp) => resp.json())
+        .then(function (data) {
+
+            data.forEach(element => {
+                people++;
+            });
+
+            let divtag = document.createElement('div');
+
+            divtag.innerHTML = `${people}`;
+            datadiv.appendChild(divtag);
+            getTrivia(people);
         })
 }
 
@@ -75,8 +101,7 @@ function deleteVisitor(id) {
 
 // LOADS UPCOMING TRAIN DEPARTURES
 function getTrainTimes() {
-    clearDiv('departures');
-
+    
     const departurediv = document.getElementById('departures');
 
     const uriTrains = 'https://cors-anywhere.herokuapp.com/http://api.sl.se/api2/realtimedeparturesV4.json?key=81a6a09603e14d51a73276f98ba095bb&siteid=9297&timewindow=10';
@@ -85,6 +110,8 @@ function getTrainTimes() {
         .then(function (data) {
             console.log(data)
             let departures = data.ResponseData.Metros;
+
+            clearDiv('departures');
             return departures.map(function (departure) {
                 let divtag = document.createElement('div');
 
@@ -99,8 +126,7 @@ function getTrainTimes() {
 
 // LOADS CURRENT FORECAST
 function getForecast() {
-    clearDiv('divForecast');
-
+    
     const divForecast = document.getElementById('divForecast');
     const uriForecast = 'https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/18.0629/lat/59.3182/data.json';
 
@@ -108,13 +134,62 @@ function getForecast() {
         .then((resp) => resp.json())
         .then(function (data) {
             console.log(data)
-            let forecasts = data.timeSeries[2].parameters;
+            let forecast = data.timeSeries[1].parameters;
             let divtag = document.createElement('div');
 
-            divtag.innerHTML = `${'Temperatur: ' + forecasts[1].values[0]}`;
+            clearDiv('divForecast');
+            divtag.innerHTML = `${'Temperature: ' + forecast[1].values[0]}`;
             divForecast.appendChild(divtag);
 
         })
+        .catch(function (error) {
+            console.log(error);
+        });
+}
+
+// LOADS CURRENT TIME
+function getTime() {
+
+    const divTime = document.getElementById('divTime');
+    const uriTime = 'http://worldclockapi.com/api/json/gmt/now';
+
+    fetch(uriTime)
+        .then((resp) => resp.json())
+        .then(function (data) {
+            //console.log(data)
+            let date = new Date(data.currentDateTime);
+            let time = date.getHours() + ":" + date.getMinutes() + " " + data.dayOfTheWeek;
+
+            let divtag = document.createElement('div');
+
+            clearDiv('divTime');
+            divtag.innerHTML = `${time}`;
+            divTime.appendChild(divtag);
+
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+}
+
+// LOADS TRIVIA
+function getTrivia(int){
+
+    const uriTrivia = 'http://numbersapi.com/' + int + '/trivia?json';
+    const datadiv = document.getElementById('datadiv');
+    
+    fetch(uriTrivia)
+        .then((resp) => resp.json())
+        .then(function (data) {
+            trivia = data.text;
+
+            let divtag = document.createElement('div');
+
+            divtag.innerHTML = `${": Did you know that " + trivia}`;
+            datadiv.appendChild(divtag);
+            console.log("HELLO + " + trivia);
+        })
+        
         .catch(function (error) {
             console.log(error);
         });

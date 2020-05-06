@@ -22,6 +22,7 @@
             <div id="datadiv" class="fontSmall"></div>
             <div id="departures" class="fontSmall"></div>
             <div id="divForecast" class="fontSmall"></div>
+            <div id="divTime" class="fontBig"></div>
 
         </div>
     </div>
@@ -29,6 +30,13 @@
 
 <script>
     loadData();
+</script>
+
+<script>
+    (function run() {
+        getTime();
+        setTimeout(run, 1000);
+    })();
 </script>
 
 <script>
