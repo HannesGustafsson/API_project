@@ -11,6 +11,11 @@ var trivia;
 /* LOADS DATA
 function loadData() {
 
+    let divtag = document.createElement('div');
+            divtag.innerHTML = `${"People in the building: " + people}`;
+            datadiv.appendChild(divtag);
+            getTrivia(people);
+
     people = 0;
     var triviaString;
     const datadiv = document.getElementById('datadiv');
@@ -32,20 +37,23 @@ function loadData() {
 
     var people = 0;
     const datadiv = document.getElementById('datadiv');
+    const divTrivia = document.getElementById('divTrivia');
 
     datadiv.innerHTML = '';
     fetch(uriVisitors)
         .then((resp) => resp.json())
         .then(function (data) {
+            data.map(function (data) {
 
-            data.forEach(element => {
                 people++;
-            });
+                let divtag = document.createElement('div');
 
-            let divtag = document.createElement('div');
+                divtag.innerHTML = `<button onclick="deleteVisitor(${data.id})">-</button> ${data.name}`;
+                datadiv.appendChild(divtag);
+            })
 
-            divtag.innerHTML = `${"People in the building: " + people}`;
-            datadiv.appendChild(divtag);
+            document.createElement('div').innerHTML = `${"People in the building: " + people}`;
+            divTrivia.appendChild(document.createElement('div'));
             getTrivia(people);
         })
 }
@@ -114,17 +122,18 @@ function getDepartures(siteId) {
             let departuresBuses = data.ResponseData.Buses;
 
             clearDiv('divMetros');
-            document.getElementById("divMetros").innerHTML += 'Metro Station: ' + data.ResponseData.Metros[0].StopAreaName;
+            document.getElementById("divMetros").innerHTML += '<b>Metro Station: ' + data.ResponseData.Metros[0].StopAreaName + '</b>';
             departuresMetros.map(function (departure) {
                 let divtag = document.createElement('div');
                 divtag.innerHTML = `${departure.LineNumber + " " + departure.Destination + " " + departure.DisplayTime}`;
                 departuredivMetros.appendChild(divtag);
             })
+
             clearDiv('divBuses');
-            document.getElementById("divBuses").innerHTML += 'Bus Station: ' + data.ResponseData.Buses[0].StopAreaName;
+            document.getElementById("divBuses").innerHTML += '<b>Bus Station: ' + data.ResponseData.Buses[0].StopAreaName + '</b>';
             departuresBuses.map(function (departure) {
                 let divtag = document.createElement('div');
-                divtag.innerHTML = `${departure.LineNumber + " " + departure.Destination + " " + departure.DisplayTime}`;
+                divtag.innerHTML = `${departure.LineNumber + "&#09;" + departure.Destination + " " + departure.DisplayTime}`;
                 departuredivBuses.appendChild(divtag);
             })
         })
@@ -147,7 +156,6 @@ function getForecast() {
             let divtag = document.createElement('div');
 
             clearDiv('divForecast');
-
             // Since the index location of temperature changes for some reason, loops through to find it
             forecast.forEach(element => {
                 if (element.name == "t")
@@ -156,7 +164,6 @@ function getForecast() {
                     divForecast.appendChild(divtag);
                 } 
             }); 
-
         })
         .catch(function (error) {
             console.log(error);
@@ -174,7 +181,6 @@ function getTime() {
         .then(function (data) {
             let date = new Date(data.currentDateTime);
             let time = date.getHours() + ":" + date.getMinutes() + " " + data.dayOfTheWeek;
-
             let divtag = document.createElement('div');
 
             clearDiv('divTime');
@@ -197,7 +203,6 @@ function getTrivia(int){
         .then((resp) => resp.json())
         .then(function (data) {
             trivia = data.text;
-
             let divtag = document.createElement('div');
 
             divtag.innerHTML = `${"Did you know that " + trivia}`;
