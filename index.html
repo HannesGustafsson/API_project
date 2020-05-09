@@ -20,7 +20,8 @@
 
 
             <div id="datadiv" class="fontSmall"></div>
-            <div id="departures" class="fontSmall"></div>
+            <div id="divMetros" class="fontSmall"></div>
+            <div id="divBuses" class="fontSmall"></div>
             <div id="divForecast" class="fontSmall"></div>
             <div id="divTime" class="fontBig"></div>
 
@@ -41,7 +42,7 @@
 
 <script>
     (function run() {
-        getTrainTimes();
+        getDepartures(9297);
         setTimeout(run, 10000);
     })();
 </script>

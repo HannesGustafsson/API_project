@@ -44,7 +44,7 @@ function loadData() {
 
             let divtag = document.createElement('div');
 
-            divtag.innerHTML = `${people}`;
+            divtag.innerHTML = `${"People in the building: " + people}`;
             datadiv.appendChild(divtag);
             getTrivia(people);
         })
@@ -100,23 +100,32 @@ function deleteVisitor(id) {
 }
 
 // LOADS UPCOMING TRAIN DEPARTURES
-function getTrainTimes() {
+function getDepartures(siteId) {
     
-    const departurediv = document.getElementById('departures');
+    const departuredivMetros = document.getElementById('divMetros');
+    const departuredivBuses = document.getElementById('divBuses');
 
-    const uriTrains = 'https://cors-anywhere.herokuapp.com/http://api.sl.se/api2/realtimedeparturesV4.json?key=81a6a09603e14d51a73276f98ba095bb&siteid=9297&timewindow=10';
+    const uriTrains = 'https://cors-anywhere.herokuapp.com/http://api.sl.se/api2/realtimedeparturesV4.json?key=81a6a09603e14d51a73276f98ba095bb&siteid= ' + siteId + '&timewindow=10';
     fetch(uriTrains)
         .then((resp) => resp.json())
         .then(function (data) {
             console.log(data)
-            let departures = data.ResponseData.Metros;
+            let departuresMetros = data.ResponseData.Metros;
+            let departuresBuses = data.ResponseData.Buses;
 
-            clearDiv('departures');
-            return departures.map(function (departure) {
+            clearDiv('divMetros');
+            document.getElementById("divMetros").innerHTML += 'Metro Station: ' + data.ResponseData.Metros[0].StopAreaName;
+            departuresMetros.map(function (departure) {
                 let divtag = document.createElement('div');
-
                 divtag.innerHTML = `${departure.LineNumber + " " + departure.Destination + " " + departure.DisplayTime}`;
-                departurediv.appendChild(divtag);
+                departuredivMetros.appendChild(divtag);
+            })
+            clearDiv('divBuses');
+            document.getElementById("divBuses").innerHTML += 'Bus Station: ' + data.ResponseData.Buses[0].StopAreaName;
+            departuresBuses.map(function (departure) {
+                let divtag = document.createElement('div');
+                divtag.innerHTML = `${departure.LineNumber + " " + departure.Destination + " " + departure.DisplayTime}`;
+                departuredivBuses.appendChild(divtag);
             })
         })
         .catch(function (error) {
@@ -138,8 +147,15 @@ function getForecast() {
             let divtag = document.createElement('div');
 
             clearDiv('divForecast');
-            divtag.innerHTML = `${'Temperature: ' + forecast[1].values[0]}`;
-            divForecast.appendChild(divtag);
+
+            // Since the index location of temperature changes for some reason, loops through to find it
+            forecast.forEach(element => {
+                if (element.name == "t")
+                {
+                    divtag.innerHTML = `${'Temperature: ' + element.values[0]}`;
+                    divForecast.appendChild(divtag);
+                } 
+            }); 
 
         })
         .catch(function (error) {
@@ -156,7 +172,6 @@ function getTime() {
     fetch(uriTime)
         .then((resp) => resp.json())
         .then(function (data) {
-            //console.log(data)
             let date = new Date(data.currentDateTime);
             let time = date.getHours() + ":" + date.getMinutes() + " " + data.dayOfTheWeek;
 
@@ -185,9 +200,8 @@ function getTrivia(int){
 
             let divtag = document.createElement('div');
 
-            divtag.innerHTML = `${": Did you know that " + trivia}`;
+            divtag.innerHTML = `${"Did you know that " + trivia}`;
             datadiv.appendChild(divtag);
-            console.log("HELLO + " + trivia);
         })
         
         .catch(function (error) {
