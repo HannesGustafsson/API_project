@@ -1,62 +1,41 @@
 
 // REMOVES CURRENT DATA FROM CHOSEN DIV
-function clearDiv(elementID)
-{
+function clearDiv(elementID) {
     document.getElementById(elementID).innerHTML = "";
 }
 
 const uriVisitors = 'https://5ea6a04c84f6290016ba6f29.mockapi.io/api/v1/visitors'
 var trivia;
 
-/* LOADS DATA
-function loadData() {
 
-    let divtag = document.createElement('div');
-            divtag.innerHTML = `${"People in the building: " + people}`;
-            datadiv.appendChild(divtag);
-            getTrivia(people);
-
-    people = 0;
-    var triviaString;
-    const datadiv = document.getElementById('datadiv');
-
-    datadiv.innerHTML = '';
-    fetch(uriVisitors)
-        .then((resp) => resp.json())
-        .then(function (data) {
-            return data.map(function (data) {
-                let divtag = document.createElement('div');
-
-                divtag.innerHTML = `<button onclick="deleteVisitor(${data.id})">-</button> ${data.name}`;
-                datadiv.appendChild(divtag);
-            })
-        })
-}*/
-
+// LOADS PEOPLE AND TRIVIA DATA
 function loadData() {
 
     var people = 0;
-    const datadiv = document.getElementById('datadiv');
+    const dropdown = document.getElementById('dropdown');
     const divTrivia = document.getElementById('divTrivia');
 
-    datadiv.innerHTML = '';
+    clearDiv('dropdown');
+    clearDiv('divTrivia');
     fetch(uriVisitors)
         .then((resp) => resp.json())
         .then(function (data) {
             data.map(function (data) {
-
                 people++;
+
                 let divtag = document.createElement('div');
 
                 divtag.innerHTML = `<button onclick="deleteVisitor(${data.id})">-</button> ${data.name}`;
-                datadiv.appendChild(divtag);
+                dropdown.appendChild(divtag);
             })
 
-            document.createElement('div').innerHTML = `${"People in the building: " + people}`;
-            divTrivia.appendChild(document.createElement('div'));
+            //document.createElement('div').innerHTML = `${"People in the building: " + people}`;
+            divTrivia.innerHTML = `${"People in the building: <b>" + people + '</b>'}`;
+            //divTrivia.appendChild(document.createElement('div'));
             getTrivia(people);
         })
 }
+
 
 // ADDS NEW VISITOR
 function addVisitor() {
@@ -81,7 +60,7 @@ function addVisitor() {
         .then(res => res.json())
         .then(res => console.log(res))
 
-        setTimeout(() => {loadData()}, 500);
+    setTimeout(() => { loadData() }, 500);
 }
 
 
@@ -104,49 +83,80 @@ function deleteVisitor(id) {
         .then(res => res.json())
         .then(res => console.log(res))
 
-        setTimeout(() => {loadData()}, 500);                        
+    setTimeout(() => { loadData() }, 500);
 }
+
 
 // LOADS UPCOMING TRAIN DEPARTURES
 function getDepartures(siteId) {
-    
-    const departuredivMetros = document.getElementById('divMetros');
-    const departuredivBuses = document.getElementById('divBuses');
+
+    const divMetros = document.getElementById('divMetros');
+    const divBuses = document.getElementById('divBuses');
+    const divTrains = document.getElementById('divTrains');
 
     const uriTrains = 'https://cors-anywhere.herokuapp.com/http://api.sl.se/api2/realtimedeparturesV4.json?key=81a6a09603e14d51a73276f98ba095bb&siteid= ' + siteId + '&timewindow=10';
     fetch(uriTrains)
         .then((resp) => resp.json())
         .then(function (data) {
             console.log(data)
-            let departuresMetros = data.ResponseData.Metros;
-            let departuresBuses = data.ResponseData.Buses;
+            let metros = data.ResponseData.Metros;
+            let buses = data.ResponseData.Buses;
+            let trains = data.ResponseData.Trains;
 
             clearDiv('divMetros');
-            document.getElementById("divMetros").innerHTML += '<b>Metro Station: ' + data.ResponseData.Metros[0].StopAreaName + '</b>';
-            departuresMetros.map(function (departure) {
-                let divtag = document.createElement('div');
-                divtag.innerHTML = `${departure.LineNumber + " " + departure.Destination + " " + departure.DisplayTime}`;
-                departuredivMetros.appendChild(divtag);
-            })
+            if (metros.length > 0) {
+                //divMetros.style.display = "block";
+                divMetros.innerHTML += '<b>' + data.ResponseData.Metros[0].TransportMode + ' Station: ' + data.ResponseData.Metros[0].StopAreaName + '</b>';
+                metros.map(function (departure) {
+                    let divtag = document.createElement('div');
+                    divtag.innerHTML = `${departure.LineNumber + " " + departure.Destination + " " + departure.DisplayTime}`;
+                    divMetros.appendChild(divtag);
+                })
+            }
+            else {
+                divMetros.style.display = "none";
+            }
 
             clearDiv('divBuses');
-            document.getElementById("divBuses").innerHTML += '<b>Bus Station: ' + data.ResponseData.Buses[0].StopAreaName + '</b>';
-            departuresBuses.map(function (departure) {
-                let divtag = document.createElement('div');
-                divtag.innerHTML = `${departure.LineNumber + "&#09;" + departure.Destination + " " + departure.DisplayTime}`;
-                departuredivBuses.appendChild(divtag);
-            })
+            if (buses.length > 0) {
+                //divBuses.style.display = "block";
+                divBuses.innerHTML += '<b>' + data.ResponseData.Buses[0].TransportMode +' Station: ' + data.ResponseData.Buses[0].StopAreaName + '</b>';
+                buses.map(function (departure) {
+                    let divtag = document.createElement('div');
+                    divtag.innerHTML = `${departure.LineNumber + "&#09;" + departure.Destination + " " + departure.DisplayTime}`;
+                    divBuses.appendChild(divtag);
+                })
+            }
+            else {
+                divBuses.style.display = "none";
+            }
+
+            clearDiv('divTrains');
+            if (trains.length > 0) {
+                //divMetros.style.display = "block"
+                divTrains.innerHTML += '<b>' + data.ResponseData.Trains[0].TransportMode +' Station: ' + data.ResponseData.Trains[0].StopAreaName + '</b>';
+                trains.map(function (departure) {
+                    let divtag = document.createElement('div');
+                    divtag.innerHTML = `${departure.LineNumber + "&#09;" + departure.Destination + " " + departure.DisplayTime}`;
+                    divTrains.appendChild(divtag);
+                })
+            }
+            else {
+                divTrains.style.display = "none";
+            }
+
         })
         .catch(function (error) {
             console.log(error);
         });
 }
 
+
 // LOADS CURRENT FORECAST
-function getForecast() {
-    
+function getForecast(lat, lon) {
+
     const divForecast = document.getElementById('divForecast');
-    const uriForecast = 'https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/18.0629/lat/59.3182/data.json';
+    const uriForecast = 'https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/' + lon + '/lat/' + lat + '/data.json';
 
     fetch(uriForecast)
         .then((resp) => resp.json())
@@ -157,18 +167,24 @@ function getForecast() {
 
             clearDiv('divForecast');
             // Since the index location of temperature changes for some reason, loops through to find it
+            let temp;
+            let rain;
             forecast.forEach(element => {
-                if (element.name == "t")
-                {
-                    divtag.innerHTML = `${'Temperature: ' + element.values[0]}`;
-                    divForecast.appendChild(divtag);
-                } 
-            }); 
+                if (element.name == "t") {
+                    temp = element.values[0];
+                }
+                if (element.name == "pmedian") {
+                    rain = element.values;
+                }
+            });
+            divtag.innerHTML = `${'<b>' + temp + '°C</b> and <b> ' + rain + 'mm/h</b> of rain'}`;
+            divForecast.appendChild(divtag);
         })
         .catch(function (error) {
             console.log(error);
         });
 }
+
 
 // LOADS CURRENT TIME
 function getTime() {
@@ -193,22 +209,23 @@ function getTime() {
         });
 }
 
+
 // LOADS TRIVIA
-function getTrivia(int){
+function getTrivia(int) {
 
     const uriTrivia = 'http://numbersapi.com/' + int + '/trivia?json';
-    const datadiv = document.getElementById('datadiv');
-    
+    const divTrivia = document.getElementById('divTrivia');
+
     fetch(uriTrivia)
         .then((resp) => resp.json())
         .then(function (data) {
             trivia = data.text;
             let divtag = document.createElement('div');
 
-            divtag.innerHTML = `${"Did you know that " + trivia}`;
-            datadiv.appendChild(divtag);
+            divtag.innerHTML = `${"Fact: " + trivia}`;
+            divTrivia.appendChild(divtag);
         })
-        
+
         .catch(function (error) {
             console.log(error);
         });
