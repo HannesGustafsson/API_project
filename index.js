@@ -29,9 +29,7 @@ function loadData() {
                 dropdown.appendChild(divtag);
             })
 
-            //document.createElement('div').innerHTML = `${"People in the building: " + people}`;
             divTrivia.innerHTML = `${"People in the building: <b>" + people + '</b>'}`;
-            //divTrivia.appendChild(document.createElement('div'));
             getTrivia(people);
         })
 }
@@ -103,9 +101,10 @@ function getDepartures(siteId) {
             let buses = data.ResponseData.Buses;
             let trains = data.ResponseData.Trains;
 
+            // Prints Metro information if available
             clearDiv('divMetros');
             if (metros.length > 0) {
-                //divMetros.style.display = "block";
+                divMetros.style.display = "inline-block";
                 divMetros.innerHTML += '<b>' + data.ResponseData.Metros[0].TransportMode + ' Station: ' + data.ResponseData.Metros[0].StopAreaName + '</b>';
                 metros.map(function (departure) {
                     let divtag = document.createElement('div');
@@ -117,13 +116,14 @@ function getDepartures(siteId) {
                 divMetros.style.display = "none";
             }
 
+            // Prints Bus information if available
             clearDiv('divBuses');
             if (buses.length > 0) {
-                //divBuses.style.display = "block";
+                divBuses.style.display = "inline-block";
                 divBuses.innerHTML += '<b>' + data.ResponseData.Buses[0].TransportMode +' Station: ' + data.ResponseData.Buses[0].StopAreaName + '</b>';
                 buses.map(function (departure) {
                     let divtag = document.createElement('div');
-                    divtag.innerHTML = `${departure.LineNumber + "&#09;" + departure.Destination + " " + departure.DisplayTime}`;
+                    divtag.innerHTML = `${departure.LineNumber + " " + departure.Destination + " " + departure.DisplayTime}`;
                     divBuses.appendChild(divtag);
                 })
             }
@@ -131,13 +131,14 @@ function getDepartures(siteId) {
                 divBuses.style.display = "none";
             }
 
+            // Prints Train information if available
             clearDiv('divTrains');
             if (trains.length > 0) {
-                //divMetros.style.display = "block"
+                divTrains.style.display = "inline-block"
                 divTrains.innerHTML += '<b>' + data.ResponseData.Trains[0].TransportMode +' Station: ' + data.ResponseData.Trains[0].StopAreaName + '</b>';
                 trains.map(function (departure) {
                     let divtag = document.createElement('div');
-                    divtag.innerHTML = `${departure.LineNumber + "&#09;" + departure.Destination + " " + departure.DisplayTime}`;
+                    divtag.innerHTML = `${departure.LineNumber + " " + departure.Destination + " " + departure.DisplayTime}`;
                     divTrains.appendChild(divtag);
                 })
             }
@@ -196,7 +197,9 @@ function getTime() {
         .then((resp) => resp.json())
         .then(function (data) {
             let date = new Date(data.currentDateTime);
-            let time = date.getHours() + ":" + date.getMinutes() + " " + data.dayOfTheWeek;
+            let time = date.getHours() + ":";
+            if(date.getMinutes() < 10) { time += "0";}
+            time += date.getMinutes() + " " + data.dayOfTheWeek;
             let divtag = document.createElement('div');
 
             clearDiv('divTime');
